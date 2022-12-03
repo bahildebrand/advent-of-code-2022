@@ -36,13 +36,21 @@ fn build_elf_set() -> Result<BTreeSet<Elf>> {
     Ok(elves)
 }
 
-pub fn day_1_1() -> Result<u64> {
-    let elves = build_elf_set()?;
-
-    Ok(elves.into_iter().last().unwrap().calories)
+pub fn day_1() -> Result<()> {
+    day_1_1()?;
+    day_1_2()
 }
 
-pub fn day_1_2() -> Result<u64> {
+pub fn day_1_1() -> Result<()> {
+    let elves = build_elf_set()?;
+
+    let calories = elves.into_iter().last().unwrap().calories;
+    println!("Day 1-1: {}", calories);
+
+    Ok(())
+}
+
+pub fn day_1_2() -> Result<()> {
     let elves = build_elf_set()?;
 
     let mut elf_iter = elves.into_iter().rev();
@@ -52,5 +60,7 @@ pub fn day_1_2() -> Result<u64> {
         top_3_cals += elf.calories;
     }
 
-    Ok(top_3_cals)
+    println!("Day 1-2: {}", top_3_cals);
+
+    Ok(())
 }
