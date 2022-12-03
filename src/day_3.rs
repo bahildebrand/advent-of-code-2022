@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use std::fs::File;
 use std::io::BufRead;
 
-use anyhow::{bail, Error, Result};
+use anyhow::{bail, Result};
 
 struct Rucksack {
     compartment1: HashSet<char>,
