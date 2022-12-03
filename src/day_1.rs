@@ -16,7 +16,7 @@ impl Elf {
 }
 
 fn build_elf_set() -> Result<BTreeSet<Elf>> {
-    let file = File::open("day_1.txt")?;
+    let file = File::open("input/day_1.txt")?;
 
     let mut elves = BTreeSet::new();
     let mut elf = Elf::default();
