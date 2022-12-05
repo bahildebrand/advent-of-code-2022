@@ -21,15 +21,13 @@ fn build_elf_set() -> Result<BTreeSet<Elf>> {
     let mut elves = BTreeSet::new();
     let mut elf = Elf::default();
     let lines = std::io::BufReader::new(file).lines();
-    for line in lines {
-        if let Ok(line) = line {
-            if line.len() == 0 {
-                let old_elf = std::mem::take(&mut elf);
-                elves.insert(old_elf);
-            } else {
-                let calories = line.parse::<u64>()?;
-                elf.push_food(calories);
-            }
+    for line in lines.flatten() {
+        if line.is_empty() {
+            let old_elf = std::mem::take(&mut elf);
+            elves.insert(old_elf);
+        } else {
+            let calories = line.parse::<u64>()?;
+            elf.push_food(calories);
         }
     }
 

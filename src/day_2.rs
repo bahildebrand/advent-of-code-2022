@@ -113,7 +113,7 @@ fn day_2_1() -> Result<()> {
     let lines = std::io::BufReader::new(file).lines();
     for (line_num, line) in lines.enumerate() {
         let line = line?;
-        let tokens = line.split(" ").collect::<Vec<_>>();
+        let tokens = line.split(' ').collect::<Vec<_>>();
         if tokens.len() != 2 {
             bail!("Invalid number of choices on line {}", line_num + 1);
         }
@@ -141,7 +141,7 @@ fn day_2_2() -> Result<()> {
     let lines = std::io::BufReader::new(file).lines();
     for (line_num, line) in lines.enumerate() {
         let line = line?;
-        let tokens = line.split(" ").collect::<Vec<_>>();
+        let tokens = line.split(' ').collect::<Vec<_>>();
         if tokens.len() != 2 {
             bail!("Invalid number of choices on line {}", line_num + 1);
         }

@@ -1,6 +1,5 @@
-use std::cmp::max;
+use std::fs::File;
 use std::io::BufRead;
-use std::{cmp::min, fs::File};
 
 use anyhow::{bail, Error, Result};
 
@@ -19,7 +18,7 @@ impl TryFrom<&str> for SectionRange {
     type Error = Error;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let tokens = value.split("-").collect::<Vec<_>>();
+        let tokens = value.split('-').collect::<Vec<_>>();
         if tokens.len() != 2 {
             bail!("Invalid SectionRange string: {}", value);
         }
@@ -40,7 +39,7 @@ impl TryFrom<String> for ElfPair {
     type Error = Error;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        let tokens = value.split(",").collect::<Vec<_>>();
+        let tokens = value.split(',').collect::<Vec<_>>();
         if tokens.len() != 2 {
             bail!("Invalid SectionRange string: {}", value);
         }
