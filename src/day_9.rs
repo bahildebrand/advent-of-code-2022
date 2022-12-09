@@ -73,13 +73,11 @@ fn cmd_to_move_step(cmd: Cmd) -> (i32, i32) {
     }
 }
 
-fn cmd_to_tail_pos(cmd: Cmd, head: (i32, i32)) -> (i32, i32) {
-    match cmd {
-        Cmd::Up(_) => (head.0, head.1 - 1),
-        Cmd::Right(_) => (head.0 - 1, head.1),
-        Cmd::Left(_) => (head.0 + 1, head.1),
-        Cmd::Down(_) => (head.0, head.1 + 1),
-    }
+fn calc_tail_pos(head: (i32, i32), tail: (i32, i32)) -> (i32, i32) {
+    let x_diff = head.0 - tail.0;
+    let y_diff = head.1 - tail.1;
+
+    (tail.0 + x_diff.signum(), tail.1 + y_diff.signum())
 }
 
 fn cmd_to_end_point(cmd: Cmd, start: (i32, i32)) -> (i32, i32) {
@@ -96,14 +94,10 @@ fn iterate_moves(cmd: Cmd, rope: &mut Vec<(i32, i32)>, tail_map: &mut HashSet<(i
 
     while rope[0] != head_end {
         let move_step = cmd_to_move_step(cmd);
+        rope[0] = (rope[0].0 + move_step.0, rope[0].1 + move_step.1);
         for knot_idx in 0..(rope.len() - 1) {
-            rope[knot_idx] = (
-                rope[knot_idx].0 + move_step.0,
-                rope[knot_idx].1 + move_step.1,
-            );
-
             if !check_adjacent(rope[knot_idx], rope[knot_idx + 1]) {
-                rope[knot_idx + 1] = cmd_to_tail_pos(cmd, rope[knot_idx]);
+                rope[knot_idx + 1] = calc_tail_pos(rope[knot_idx], rope[knot_idx + 1]);
             }
         }
 
