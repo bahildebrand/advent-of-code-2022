@@ -1,4 +1,5 @@
 mod day_1;
+mod day_10;
 mod day_2;
 mod day_3;
 mod day_4;
@@ -9,8 +10,10 @@ mod day_8;
 mod day_9;
 
 use anyhow::Result;
+use tracing::Level;
 
 use day_1::day_1;
+use day_10::day_10;
 use day_2::day_2;
 use day_3::day_3;
 use day_4::day_4;
@@ -21,6 +24,11 @@ use day_8::day_8;
 use day_9::day_9;
 
 fn main() -> Result<()> {
+    tracing_subscriber::fmt::init();
+
+    let root = tracing::span!(Level::INFO, "Root");
+    let _enter = root.enter();
+
     day_1()?;
     day_2()?;
     day_3()?;
@@ -30,6 +38,7 @@ fn main() -> Result<()> {
     day_7()?;
     day_8()?;
     day_9()?;
+    day_10()?;
 
     Ok(())
 }
