@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use anyhow::{bail, Error, Result};
 
@@ -125,8 +125,5 @@ fn check_adjacent(head_pos: (i32, i32), tail_pos: (i32, i32)) -> bool {
 fn parse() -> Result<Vec<Cmd>> {
     let input = std::fs::read_to_string("input/day_9.txt")?;
 
-    input
-        .lines()
-        .map(|cmd_str| Cmd::try_from(cmd_str))
-        .collect()
+    input.lines().map(Cmd::try_from).collect()
 }

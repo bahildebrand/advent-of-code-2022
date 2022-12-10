@@ -57,7 +57,7 @@ impl Sprite {
             }
         }
 
-        return false;
+        false
     }
 
     fn set_pixel_location(&mut self, pixel: i32) {
@@ -160,7 +160,7 @@ fn parse() -> Result<Cpu> {
 fn parse_inner(input: String) -> Result<Cpu> {
     let ops = input
         .lines()
-        .map(|op_str| Op::try_from(op_str))
+        .map(Op::try_from)
         .collect::<Result<VecDeque<_>>>()?;
 
     let mut display = Vec::with_capacity(6);
