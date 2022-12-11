@@ -1,5 +1,6 @@
 mod day_1;
 mod day_10;
+mod day_11;
 mod day_2;
 mod day_3;
 mod day_4;
@@ -14,6 +15,7 @@ use tracing::Level;
 
 use day_1::day_1;
 use day_10::day_10;
+use day_11::day_11;
 use day_2::day_2;
 use day_3::day_3;
 use day_4::day_4;
@@ -39,6 +41,7 @@ fn main() -> Result<()> {
     day_8()?;
     day_9()?;
     day_10()?;
+    day_11()?;
 
     Ok(())
 }
