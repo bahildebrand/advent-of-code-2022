@@ -2,6 +2,7 @@ mod day_1;
 mod day_10;
 mod day_11;
 mod day_12;
+mod day_13;
 mod day_2;
 mod day_3;
 mod day_4;
@@ -18,6 +19,7 @@ use day_1::day_1;
 use day_10::day_10;
 use day_11::day_11;
 use day_12::day_12;
+use day_13::day_13;
 use day_2::day_2;
 use day_3::day_3;
 use day_4::day_4;
@@ -45,6 +47,7 @@ fn main() -> Result<()> {
     day_10()?;
     day_11()?;
     day_12()?;
+    day_13()?;
 
     Ok(())
 }
