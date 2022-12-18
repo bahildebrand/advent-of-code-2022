@@ -1,9 +1,39 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    cell::RefCell,
+    collections::{HashMap, HashSet},
+    rc::Rc,
+};
 
 use anyhow::Result;
 
 pub fn day_16() -> Result<()> {
+    day_16_1()
+}
+
+fn day_16_1() -> Result<()> {
+    let volcano = parse("input/day_16.txt")?;
+
+    let pressure = volcano.find_highest_pressure(30);
+    println!("Day 16-1: {}", pressure);
+
     Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+struct MapKey {
+    name: String,
+    time: u32,
+    tunnels: Vec<String>,
+}
+
+impl MapKey {
+    fn new(name: String, time: u32, tunnels: Vec<String>) -> Self {
+        Self {
+            name,
+            time,
+            tunnels,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -22,8 +52,9 @@ impl Volcano {
     fn find_highest_pressure(&self, time: u32) -> u32 {
         let mut valve_stack = vec![];
         let cur_valve = self.valve_map.get(&"AA".to_string()).unwrap();
+        let dp = Rc::new(RefCell::new(HashMap::new()));
 
-        self.find_highest_pressure_inner(0, &mut valve_stack, time, cur_valve, HashSet::new())
+        self.find_highest_pressure_inner(0, &mut valve_stack, time, cur_valve, dp.clone())
     }
 
     fn find_highest_pressure_inner(
@@ -32,52 +63,42 @@ impl Volcano {
         valve_stack: &mut Vec<String>,
         time: u32,
         cur_valve: &Valve,
-        mut visited: HashSet<String>,
+        dp: Rc<RefCell<HashMap<MapKey, u32>>>,
     ) -> u32 {
-        println!("{} - {:?}", time, valve_stack);
         if time == 0 {
             return pressure;
         }
 
-        if valve_stack.len() >= self.valve_map.len() - 1 {
-            for _ in 0..time {
-                pressure += self.tick_pressure(valve_stack);
-            }
-
-            return pressure;
+        let map_key = MapKey::new(cur_valve.name.clone(), time, valve_stack.clone());
+        if let Some(pressure) = dp.borrow().get(&map_key) {
+            return *pressure;
         }
 
-        visited.insert(cur_valve.name.clone());
+        let iterate_pressure =
+            |pressure: &u32, valve_stack: &mut Vec<String>, cur_valve: &Valve, time: &u32| {
+                let pressure = pressure + self.tick_pressure(valve_stack);
+                cur_valve
+                    .tunnels
+                    .clone()
+                    .into_iter()
+                    .map(|valve_name| {
+                        let cur_valve = self.valve_map.get(&valve_name).unwrap();
 
-        let iterate_pressure = |pressure: &u32,
-                                valve_stack: &mut Vec<String>,
-                                cur_valve: &Valve,
-                                time: &u32,
-                                visited: HashSet<String>| {
-            let pressure = pressure + self.tick_pressure(valve_stack);
-            cur_valve
-                .tunnels
-                .clone()
-                .into_iter()
-                .map(|valve_name| {
-                    let cur_valve = self.valve_map.get(&valve_name).unwrap();
+                        self.find_highest_pressure_inner(
+                            pressure,
+                            valve_stack,
+                            time - 1,
+                            cur_valve,
+                            dp.clone(),
+                        )
+                    })
+                    .max()
+                    .unwrap_or_default()
+            };
 
-                    self.find_highest_pressure_inner(
-                        pressure,
-                        valve_stack,
-                        time - 1,
-                        cur_valve,
-                        visited.clone(),
-                    )
-                })
-                .max()
-                .unwrap_or_default()
-        };
+        let mut high_pressure = iterate_pressure(&pressure, valve_stack, cur_valve, &time);
 
-        let mut high_pressure =
-            pressure + iterate_pressure(&pressure, valve_stack, cur_valve, &time, visited.clone());
-
-        if !valve_stack.contains(&cur_valve.name) {
+        if cur_valve.flow_rate > 0 && !valve_stack.contains(&cur_valve.name) {
             pressure += self.tick_pressure(valve_stack);
             valve_stack.push(cur_valve.name.clone());
             let time = time - 1;
@@ -85,21 +106,17 @@ impl Volcano {
             if time > 0 {
                 high_pressure = std::cmp::max(
                     high_pressure,
-                    iterate_pressure(&pressure, valve_stack, cur_valve, &time, visited.clone()),
+                    iterate_pressure(&pressure, valve_stack, cur_valve, &time),
                 );
             }
 
             valve_stack.pop();
-        } else {
-            high_pressure = std::cmp::max(
-                high_pressure,
-                iterate_pressure(&pressure, valve_stack, cur_valve, &time, visited.clone()),
-            );
         }
 
-        visited.remove(&cur_valve.name);
+        let map_key = MapKey::new(cur_valve.name.clone(), time, valve_stack.clone());
+        dp.borrow_mut().insert(map_key, high_pressure);
 
-        println!("Pressure: {}", high_pressure);
+        // println!("Pressure: {}", high_pressure);
 
         high_pressure
     }
@@ -155,7 +172,7 @@ mod test {
 
         let pressure = volcano.find_highest_pressure(30);
 
-        println!("{}", pressure);
+        assert_eq!(pressure, 1651);
 
         Ok(())
     }
