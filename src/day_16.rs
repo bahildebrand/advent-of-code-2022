@@ -1,8 +1,4 @@
-use std::{
-    cell::RefCell,
-    collections::{HashMap, HashSet},
-    rc::Rc,
-};
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use anyhow::Result;
 
@@ -54,7 +50,7 @@ impl Volcano {
         let cur_valve = self.valve_map.get(&"AA".to_string()).unwrap();
         let dp = Rc::new(RefCell::new(HashMap::new()));
 
-        self.find_highest_pressure_inner(0, &mut valve_stack, time, cur_valve, dp.clone())
+        self.find_highest_pressure_inner(0, &mut valve_stack, time, cur_valve, dp)
     }
 
     fn find_highest_pressure_inner(
@@ -146,7 +142,7 @@ fn parse(path: &str) -> Result<Volcano> {
         let mut tunnels = Vec::new();
         let tunnel_tokens = tokens[1].split(' ').collect::<Vec<_>>();
         for token in tunnel_tokens[4..].iter() {
-            tunnels.push(token.replace(",", ""));
+            tunnels.push(token.replace(',', ""));
         }
 
         valve_map.insert(
